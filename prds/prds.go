@@ -4,13 +4,13 @@ import "slices"
 
 type Pred[V any] = func(val V) bool
 
-func Is[V comparable](left V) func(right V) bool {
+func Eq[V comparable](left V) func(right V) bool {
 	return func(right V) bool {
 		return left == right
 	}
 }
 
-func Eq[S ~[]E, E comparable](elements S) func(elem E) bool {
+func Nx[S ~[]E, E comparable](elements S) func(elem E) bool {
 	pos := 0
 	return func(elem E) bool {
 		if pos == len(elements) {
