@@ -10,7 +10,7 @@ func Eq[V comparable](left V) func(right V) bool {
 	}
 }
 
-func Nx[S ~[]E, E comparable](elements S) func(elem E) bool {
+func Nx[S ~[]E, E comparable](elements S) func(next E) bool {
 	pos := 0
 	return func(elem E) bool {
 		if pos == len(elements) {
