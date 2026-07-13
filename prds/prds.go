@@ -1,24 +1,51 @@
 package prds
 
-import "slices"
+import (
+	"slices"
+)
 
-type Pred[V any] = func(val V) bool
+type Pred[V any] func(val V) bool
 
-func Eq[V comparable](left V) func(right V) bool {
-	return func(right V) bool {
+func (p Pred[V]) Or(right Pred[V]) Pred[V] {
+	return func(val V) bool {
+		return p(val) || right(val)
+	}
+}
+
+func (p Pred[V]) And(right Pred[V]) Pred[V] {
+	return func(val V) bool {
+		return p(val) && right(val)
+	}
+}
+
+func (p Pred[V]) Then(right Pred[V]) Pred[V] {
+	return func(val V) bool {
+		return !p(val) || right(val)
+	}
+}
+
+func (p Pred[V]) Equiv(right Pred[V]) Pred[V] {
+	return func(val V) bool {
+		return (!p(val) || right(val)) &&
+			(!right(val) || p(val))
+	}
+}
+
+func (p Pred[V]) Not(predicate Pred[V]) Pred[V] {
+	return func(val V) bool {
+		return !predicate(val)
+	}
+}
+
+func Equal[C comparable](left C) Pred[C] {
+	return func(right C) bool {
 		return left == right
 	}
 }
 
-func Nq[V comparable](left V) func(right V) bool {
-	return func(right V) bool {
-		return left != right
-	}
-}
-
-func Nx[S ~[]E, E comparable](elements S) func(next E) bool {
+func Iter[C comparable](elements ...C) Pred[C] {
 	pos := 0
-	return func(elem E) bool {
+	return func(elem C) bool {
 		if pos == len(elements) {
 			return false
 		}
@@ -28,8 +55,8 @@ func Nx[S ~[]E, E comparable](elements S) func(next E) bool {
 	}
 }
 
-func In[S ~[]E, E comparable](elements S) func(elem E) bool {
-	return func(elem E) bool {
+func Find[C comparable](elements ...C) Pred[C] {
+	return func(elem C) bool {
 		return slices.Contains(elements, elem)
 	}
 }
