@@ -43,6 +43,24 @@ func Equal[C comparable](left C) Pred[C] {
 	}
 }
 
+func NotEqual[C comparable](left C) Pred[C] {
+	return func(right C) bool {
+		return left != right
+	}
+}
+
+func Find[C comparable](elements ...C) Pred[C] {
+	return func(elem C) bool {
+		return slices.Contains(elements, elem)
+	}
+}
+
+func NotFind[C comparable](elements ...C) Pred[C] {
+	return func(elem C) bool {
+		return !slices.Contains(elements, elem)
+	}
+}
+
 func Iter[C comparable](elements ...C) Pred[C] {
 	pos := 0
 	return func(elem C) bool {
@@ -52,11 +70,5 @@ func Iter[C comparable](elements ...C) Pred[C] {
 		equals := elements[pos] == elem
 		pos++
 		return equals
-	}
-}
-
-func Find[C comparable](elements ...C) Pred[C] {
-	return func(elem C) bool {
-		return slices.Contains(elements, elem)
 	}
 }
