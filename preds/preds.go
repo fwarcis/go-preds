@@ -1,4 +1,4 @@
-package prds
+package preds
 
 import (
 	"slices"
